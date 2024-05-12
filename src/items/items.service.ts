@@ -1,6 +1,6 @@
 import { Item } from './entities/item.entity';
 import { Repository } from 'typeorm';
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateItemInput, UpdateItemInput } from './dto/inputs';
 
@@ -22,15 +22,25 @@ export class ItemsService {
     return await this.itemsRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} item`;
+  async findOne(id: string): Promise<Item> {
+    const item = await this.itemsRepository.findOneBy({ id });
+    if ( !item ) throw new NotFoundException(`Item whit ID '${id}' not found`);
+    return item;
   }
 
-  update(id: number, updateItemInput: UpdateItemInput) {
-    return `This action updates a #${id} item`;
+  async update(id: string, updateItemInput: UpdateItemInput): Promise<Item> {
+    const item = await this.itemsRepository.preload({ id, ...updateItemInput });
+
+    if ( !item ) throw new NotFoundException(`Item whit ID '${id}' not found`);
+
+    await this.itemsRepository.save(item);
+
+    return item;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} item`;
+  async remove(id: string): Promise<Item> {
+    const item = await this.findOne(id);
+    await this.itemsRepository.remove(item);
+    return {...item, id};
   }
 }
