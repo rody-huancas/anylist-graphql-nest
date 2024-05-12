@@ -6,6 +6,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin
       autoLoadEntities: true
     }),
     ItemsModule,
+    UsersModule,
   ],
   controllers: [],
   providers: [],
