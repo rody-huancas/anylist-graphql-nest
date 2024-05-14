@@ -2,13 +2,6 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Item {
-  id: ID!
-  name: String!
-  quantity: Float!
-  quantityUnits: String
-}
-
 type User {
   id: ID!
   fullName: String!
@@ -20,6 +13,13 @@ type User {
 type AuthResponse {
   token: String!
   user: User!
+}
+
+type Item {
+  id: ID!
+  name: String!
+  quantity: Float!
+  quantityUnits: String
 }
 
 type Query {
@@ -35,6 +35,7 @@ type Mutation {
   removeItem(id: ID!): Item!
   blockedUser(id: ID!): User!
   signup(signupInput: SignupInput!): AuthResponse!
+  login(loginInput: LoginInput!): AuthResponse!
 }
 
 input CreateItemInput {
@@ -53,5 +54,10 @@ input UpdateItemInput {
 input SignupInput {
   email: String!
   fullName: String!
+  password: String!
+}
+
+input LoginInput {
+  email: String!
   password: String!
 }
