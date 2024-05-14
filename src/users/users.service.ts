@@ -1,3 +1,4 @@
+import * as bcrypt from "bcrypt"
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { SignupInput } from '../auth/dto/inputs/singup.input';
@@ -14,7 +15,10 @@ export class UsersService {
 
   async create(signupInput: SignupInput): Promise<User> {
     try {
-      const newUser = this.userRepository.create(signupInput);
+      const newUser = this.userRepository.create({
+        ...signupInput,
+        password: bcrypt.hashSync(signupInput.password, 10),
+      });
       return await this.userRepository.save(newUser);
     } catch (error) {
       this.handleDBErrors(error);
