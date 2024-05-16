@@ -4,6 +4,8 @@ import { AuthResponse } from './types/auth-response.type';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { LoginInput, SignupInput } from './dto/inputs';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { CurrentUser } from './decorators/current-user.decorator';
+import { User } from 'src/users/entities/user.entity';
 
 @Resolver()
 export class AuthResolver {
@@ -26,10 +28,10 @@ export class AuthResolver {
   @Query( () => AuthResponse, { name: 'revalidate' } )
   @UseGuards( JwtAuthGuard )
   revalidateToken(
-    // @CurrentUser user: User
+    // @CurrentUser() user: User
   ): AuthResponse {
     
-    // return this.authService.revalidateToken()
-    throw new Error("Not implemented");
+    // return this.authService.validateUser()
+    throw new Error("Not implemented")
   }
 }

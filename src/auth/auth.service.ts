@@ -3,7 +3,8 @@ import { JwtService } from "@nestjs/jwt";
 import { UsersService } from 'src/users/users.service';
 import { AuthResponse } from './types/auth-response.type';
 import { LoginInput, SignupInput } from './dto/inputs';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { User } from "src/users/entities/user.entity";
 
 @Injectable()
 export class AuthService {
@@ -38,5 +39,13 @@ export class AuthService {
     return { token,  user }
   }
 
-  async revalidate() {}
+  async validateUser(id: string): Promise<User> {
+    const user = await this.usersService.findOneById(id);
+
+    if ( !user.isActive ) throw new UnauthorizedException('User is inactive, talk with an admin'); 
+
+    delete user.password;
+
+    return user;
+  }
 }
