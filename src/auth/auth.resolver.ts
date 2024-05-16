@@ -12,26 +12,21 @@ export class AuthResolver {
   constructor(private readonly authService: AuthService) {}
 
   @Mutation( () => AuthResponse, { name: 'signup' } )
-  async signup(
-    @Args('signupInput') signupInput: SignupInput
-  ): Promise<AuthResponse> {
+  async signup( @Args('signupInput') signupInput: SignupInput ): Promise<AuthResponse> {
     return this.authService.signup( signupInput );
   }
 
   @Mutation( () => AuthResponse , { name: 'login' })
-  async login(
-    @Args('loginInput') loginInput: LoginInput
-  ): Promise<AuthResponse> {
+  async login( @Args('loginInput') loginInput: LoginInput ): Promise<AuthResponse> {
     return this.authService.login( loginInput );
   }
 
   @Query( () => AuthResponse, { name: 'revalidate' } )
   @UseGuards( JwtAuthGuard )
   revalidateToken(
-    // @CurrentUser() user: User
+    @CurrentUser() user: User
   ): AuthResponse {
     
-    // return this.authService.validateUser()
-    throw new Error("Not implemented")
+    return this.authService.revalidateToken(user)
   }
 }
