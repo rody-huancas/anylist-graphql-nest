@@ -57,7 +57,11 @@ export class UsersService {
   }
 
   async block(id: string): Promise<User> {
-    throw new Error('block method not implemented');
+    const userToBlock = await this.findOneById(id);
+
+    userToBlock.isActive = false;
+
+    return await this.userRepository.save(userToBlock);
   }
 
   private handleDBErrors( error: any ): never {
