@@ -1,11 +1,12 @@
-import { Resolver, Query, Mutation, Args, ID } from '@nestjs/graphql';
-import { UsersService } from './users.service';
 import { User } from './entities/user.entity';
-import { ValidRolesArgs } from './dto/args/roles.arg';
-import { ParseUUIDPipe, UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { ValidRoles } from 'src/auth/enums/valid-roles.enum';
+import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
+import { UsersService } from './users.service';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { ValidRolesArgs } from './dto/args/roles.arg';
+import { UpdateUserInput } from './dto/update-user.input';
+import { ParseUUIDPipe, UseGuards } from '@nestjs/common';
+import { Resolver, Query, Mutation, Args, ID } from '@nestjs/graphql';
 
 @Resolver(() => User)
 @UseGuards(JwtAuthGuard)
@@ -26,6 +27,14 @@ export class UsersResolver {
     @CurrentUser([ValidRoles.admin, ValidRoles.superUser]) user: User
   ): Promise<User> {
     return this.usersService.findOneById(id);
+  }
+
+  @Mutation(() => User, { name: 'updateUser' })
+  async updateUser(
+    @Args('updateUser') updateUserInput: UpdateUserInput,
+    @CurrentUser([ValidRoles.admin]) user: User
+  ): Promise<User> {
+    return this.usersService.update(updateUserInput.id, updateUserInput, user);
   }
 
   @Mutation(() => User, { name: 'blockUser' })

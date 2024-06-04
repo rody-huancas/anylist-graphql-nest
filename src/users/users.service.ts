@@ -5,6 +5,7 @@ import { ValidRoles } from "src/auth/enums/valid-roles.enum";
 import { SignupInput } from '../auth/dto/inputs/singup.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
+import { UpdateUserInput } from './dto/update-user.input';
 
 @Injectable()
 export class UsersService {
@@ -58,6 +59,21 @@ export class UsersService {
       return await this.userRepository.findOneByOrFail({ id })
     } catch (error) {
       throw new NotFoundException(`${id} not found`);
+    }
+  }
+
+  async update(id: string, updateUserInput: UpdateUserInput, updateBy: User): Promise<User> {
+    try {
+      const user = await this.userRepository.preload({
+        ...updateUserInput,
+        id
+      })
+
+      user.lastUpdateBy = updateBy;
+
+      return await this.userRepository.save(user);
+    } catch (error) {
+      this.handleDBErrors(error);
     }
   }
 
